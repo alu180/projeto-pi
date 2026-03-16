@@ -1,15 +1,14 @@
-import { titulo } from './util';
-import titulo_padrao from './util';
+import { titulo } from './mensagens_entrada';
+import titulo_padrao from './mensagens_entrada';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button,} from 'react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <Text>{titulo}</Text>
       <Text style={{margin: 20}}>{titulo_padrao}</Text>
-      <Text style={styles.text}>AAA</Text>
-      <Button title="Clique aqui" /> 
+      <Button title="entrar" /> 
       <StatusBar style="auto" />
     </View>
   );
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-   text: {
-    mragin: 20,
+  text: {
+    margin: 20,
   },
 });
