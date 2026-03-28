@@ -1,5 +1,3 @@
-// src/screens/Pag_login.js
-import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import User_login from '../hooks/User_login';
 import { usar_auten } from '../contextos/auten_usuario';
