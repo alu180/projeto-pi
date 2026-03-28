@@ -1,28 +1,37 @@
+// src/screens/Pag_login.js
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import User_login from '../hooks/User_login';
+import { usar_auten } from '../contextos/auten_usuario';
 
-const Pag_login = ({ onLoginSuccess }) => {
+const Pag_login = () => {
+  const { login: autenlogin } = usar_auten();  // função de login do contexto
   const {
     username,
     setUsername,
     password,
     setPassword,
     loading,
+    setLoading,
     error,
-    login,
+    setError,
+    getFormData,
   } = User_login();
 
   const handleLogin = async () => {
+    const formData = getFormData();  // valida e retorna { username, password }
+    if (!formData) return;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const result = await login();
-      // Se o login for bem-sucedido notifica o componente superior
-      if (result && onLoginSuccess) {
-        onLoginSuccess(result);
-      }
+      await autenlogin(formData.username, formData.password);
+      // Se chegou aqui, login bem-sucedido. O App redirecionará automaticamente.
     } catch (err) {
-      // O erro e tratado no hook mas agnt pode exibir um alerta pro o usuário
-      Alert.alert('Falha no login', error);
+      setError('Erro ao fazer login. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
