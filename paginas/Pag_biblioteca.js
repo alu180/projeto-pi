@@ -6,6 +6,7 @@ import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
 
+// Dados de exemplo
 const livrosEmprestados = [
   {
     id: '1',
@@ -31,10 +32,12 @@ const livrosEmprestados = [
 
 const CardLivro = ({ item }) => (
   <View style={styles.card}>
+    {/* Capa do livro temporário de exemplo */}
     <View style={styles.capa}>
       <Text style={styles.capaTitulo}>{item.tituloAbrev}</Text>
       <Ionicons name={item.icone} size={36} color={CORES.branco} style={styles.capaIcone} />
     </View>
+    {/* Detalhes do livro temporário de exemplo */}
     <View style={styles.detalhes}>
       <Text style={styles.detalheTexto}>Obra: {item.obra}</Text>
       <Text style={styles.detalheTexto}>Autor: {item.autor}</Text>

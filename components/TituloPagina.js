@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { CORES } from './cores';
 
+/**
+ * Título de página
+ */
 const TituloPagina = ({ titulo, icone, direita }) => (
   <View style={styles.container}>
     <View style={styles.linha}>

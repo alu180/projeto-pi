@@ -3,6 +3,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CORES } from './cores';
 
+/**
+ * Cabeçalho dados temp
+ */
 const Header = ({
   nomeAluno = 'Aluno com um sobrenome de aluno',
   matricula = '*********',
@@ -11,10 +14,12 @@ const Header = ({
   data = '10/09/2025',
 }) => (
   <View style={styles.container}>
+    {/* Avatar seria aqui emoji como exemplo*/}
     <View style={styles.avatar}>
       <Ionicons name="happy-outline" size={28} color="#7A7A7A" />
     </View>
 
+    {/* Info do aluno */}
     <View style={styles.infoAluno}>
       <Text style={styles.nome}>{nomeAluno}</Text>
       <Text style={styles.matriculaLabel}>Matrícula:</Text>
@@ -23,12 +28,14 @@ const Header = ({
 
     <View style={styles.divisor} />
 
+    {/* Info do curso */}
     <View style={styles.infoCurso}>
       <Text style={styles.cursoTexto}>Curso: {curso}</Text>
       <Text style={styles.instituicaoLabel}>Instituição:</Text>
       <Text style={styles.instituicaoNome}>{instituicao}</Text>
     </View>
 
+    {/* Data */}
     <Text style={styles.data}>{data}</Text>
   </View>
 );

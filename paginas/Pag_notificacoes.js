@@ -11,11 +11,13 @@ const Pag_notificacoes = ({ navigation }) => (
     <Header />
 
     <ScrollView style={styles.conteudo}>
+      {/* Seção de Notificações */}
       <TituloPagina
         titulo="Notificações"
         icone={<Ionicons name="notifications" size={28} color={CORES.primaria} />}
       />
 
+      {/* Card: Reserva Confirmada temporario de exemplo */}
       <View style={styles.card}>
         <View style={styles.cardTituloLinha}>
           <Text style={styles.cardTitulo}>Reserva Confirmada</Text>
@@ -23,17 +25,20 @@ const Pag_notificacoes = ({ navigation }) => (
         </View>
       </View>
 
+      {/* Card: Aviso de devolução temporário de exemplo */}
       <View style={styles.card}>
         <Text style={styles.cardTexto}>
           O prazo de devolução do livro "S.O.S Cálculo 1" está perto de vencer.
         </Text>
       </View>
 
+      {/* Seção de Registro de Atividade */}
       <TituloPagina
         titulo="Registro de Atividade"
         icone={<Ionicons name="clipboard" size={28} color={CORES.primaria} />}
       />
 
+      {/* Card de atividade: Biblioteca temporário de exemplo */}
       <View style={styles.cardAtividade}>
         <View style={styles.atividadeCabecalho}>
           <Ionicons name="book" size={16} color={CORES.primaria} />

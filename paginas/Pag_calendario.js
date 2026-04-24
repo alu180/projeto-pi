@@ -6,6 +6,7 @@ import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
 
+// Dias da semana e dias do mês
 const diasSemana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const diasSetembro = [
   [null, null, null, null, null, null, null],
@@ -15,6 +16,7 @@ const diasSetembro = [
   [22, 23, 24, 25, 26, 27, 28],
   [29, 30, null, null, null, null, null],
 ];
+// Dias indisponíveis de exemplo
 const diasIndisponiveis = [1, 2, 3, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21];
 
 const Pag_calendario = ({ navigation, route }) => {
@@ -31,6 +33,7 @@ const Pag_calendario = ({ navigation, route }) => {
     <View style={styles.tela}>
       <Header />
 
+      {/* Título e botão de confirmar */}
       <TituloPagina
         titulo="Dias e Horários Disponíveis"
         direita={
@@ -40,15 +43,18 @@ const Pag_calendario = ({ navigation, route }) => {
         }
       />
 
+      {/* Card calendário */}
       <View style={styles.cardCalendario}>
         <Text style={styles.mesNome}>Setembro</Text>
 
+        {/* Cabeçalho dos dias da semana */}
         <View style={styles.linhaCalendario}>
           {diasSemana.map((d) => (
             <Text key={d} style={styles.diaSemana}>{d}</Text>
           ))}
         </View>
 
+        {/* Linhas de datas */}
         {diasSetembro.slice(1).map((semana, i) => (
           <View key={i} style={styles.linhaCalendario}>
             {semana.map((dia, j) => {

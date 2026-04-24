@@ -6,6 +6,9 @@ import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
 
+/*
+    Página de Sala de Estudo dados de exemplo
+*/
 const salas = [
   'Sala CB1  : Bloco C, Segundo Andar',
   'Sala CB2  : Bloco C, Segundo Andar',

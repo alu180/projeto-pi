@@ -6,6 +6,7 @@ import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
 
+//horarios de exemplo
 const periodos = {
   matutino: ['08h30', '09h30', '10h30', '11h30', '12h30'],
   vespertino: ['13h30', '14h30', '15h30', '16h30', '17h30'],
@@ -18,6 +19,7 @@ const Pag_horarios = ({ navigation, route }) => {
   const sala = route.params?.sala || 'Sala CB1';
 
   const confirmar = () => {
+    // confirmar a reserva
     alert(`Reserva confirmada!\n${sala}\nDia ${dia}/09 às ${horarioSelecionado}`);
     navigation.navigate('Home');
   };
@@ -36,6 +38,7 @@ const Pag_horarios = ({ navigation, route }) => {
       />
 
       <ScrollView style={styles.tabela}>
+        {/* Cabeçalho da tabela */}
         <View style={styles.linhaTabela}>
           {['Período\nMatutino\n08h30', 'Período\nVespertino\n13h30', 'Período\nNoturno\n18h30'].map(
             (col, i) => (
@@ -46,6 +49,7 @@ const Pag_horarios = ({ navigation, route }) => {
           )}
         </View>
 
+        {/* Linhas de horários */}
         {[0, 1, 2, 3, 4].map((linha) => (
           <View key={linha} style={styles.linhaTabela}>
             {['matutino', 'vespertino', 'noturno'].map((periodo) => {
