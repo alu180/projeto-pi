@@ -11,7 +11,9 @@ const BottomNav = ({ navigation, rotaAtiva }) => {
   const { logout } = usar_auten();
 
   const ir = (rota) => {
-    if (rota !== rotaAtiva) navigation.navigate(rota);
+    if (rota !== rotaAtiva) {
+      navigation.replace(rota);
+    }
   };
 
   const ativo = (rota) => rotaAtiva === rota;

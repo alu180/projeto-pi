@@ -12,13 +12,16 @@ const Pag_notificacoes = ({ navigation }) => (
 
     <ScrollView style={styles.conteudo}>
       {/* Seção de Notificações */}
-      <TituloPagina titulo="Notificações" icone="🔔" />
+      <TituloPagina
+        titulo="Notificações"
+        icone={<Ionicons name="notifications" size={28} color={CORES.primaria} />}
+      />
 
       {/* Card: Reserva Confirmada temporario de exemplo */}
       <View style={styles.card}>
         <View style={styles.cardTituloLinha}>
           <Text style={styles.cardTitulo}>Reserva Confirmada</Text>
-          <Ionicons name="shield-checkmark" size={20} color="green" />
+          <Ionicons name="shield-checkmark" size={22} color={CORES.verde} />
         </View>
       </View>
 
@@ -30,7 +33,10 @@ const Pag_notificacoes = ({ navigation }) => (
       </View>
 
       {/* Seção de Registro de Atividade */}
-      <TituloPagina titulo="Registro de Atividade" icone="📋" />
+      <TituloPagina
+        titulo="Registro de Atividade"
+        icone={<Ionicons name="clipboard" size={28} color={CORES.primaria} />}
+      />
 
       {/* Card de atividade: Biblioteca temporário de exemplo */}
       <View style={styles.cardAtividade}>
@@ -51,8 +57,8 @@ const Pag_notificacoes = ({ navigation }) => (
 export default Pag_notificacoes;
 
 const styles = StyleSheet.create({
-  tela:      { flex: 1, backgroundColor: CORES.branco },
-  conteudo:  { flex: 1, paddingHorizontal: 16 },
+  tela: { flex: 1, backgroundColor: CORES.branco },
+  conteudo: { flex: 1, paddingHorizontal: 16 },
   card: {
     borderWidth: 2,
     borderColor: CORES.primaria,
@@ -66,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardTitulo: { fontWeight: 'bold', fontSize: 15 },
-  cardTexto:  { fontSize: 14, textAlign: 'center' },
+  cardTexto: { fontSize: 14, textAlign: 'center' },
   cardAtividade: {
     borderWidth: 2,
     borderColor: CORES.primaria,
@@ -76,6 +82,6 @@ const styles = StyleSheet.create({
   },
   atividadeCabecalho: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   atividadeCategoria: { fontWeight: 'bold', color: CORES.primaria },
-  atividadeData:  { fontWeight: 'bold', marginBottom: 4 },
+  atividadeData: { fontWeight: 'bold', marginBottom: 4 },
   atividadeTexto: { fontSize: 13, color: '#444', marginTop: 2 },
 });

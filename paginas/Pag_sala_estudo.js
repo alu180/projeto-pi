@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
+
 /*
     Página de Sala de Estudo dados de exemplo
 */
@@ -43,7 +45,11 @@ const Pag_sala_estudo = ({ navigation }) => {
   return (
     <View style={styles.tela}>
       <Header />
-      <TituloPagina titulo={'Sala de\nEstudo'} icone="🎓" direita={botaoSeletor} />
+      <TituloPagina
+        titulo={'Sala de\nEstudo'}
+        icone={<Ionicons name="school" size={30} color={CORES.primaria} />}
+        direita={botaoSeletor}
+      />
       <ScrollView style={styles.lista}>
         {salas.map((sala, index) => (
           <TouchableOpacity
@@ -63,14 +69,15 @@ const Pag_sala_estudo = ({ navigation }) => {
 export default Pag_sala_estudo;
 
 const styles = StyleSheet.create({
-  tela:  { flex: 1, backgroundColor: CORES.branco },
+  tela: { flex: 1, backgroundColor: CORES.branco },
   lista: { flex: 1, paddingHorizontal: 16 },
   botaoSeletor: {
     borderWidth: 1,
     borderColor: CORES.borda,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: CORES.cinzaMedio,
   },
   botaoSeletorTexto: { fontSize: 12, color: CORES.texto },
   itemLista: {

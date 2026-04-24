@@ -12,20 +12,20 @@ const livrosEmprestados = [
     id: '1',
     tituloAbrev: 'S.O.S\nCálculo II',
     icone: 'school',
-    obra:      'S.O.S Calculo II',
-    autor:     'Minha Mente',
-    idObra:    '*********',
-    emprestimo:'02/06/2025',
+    obra: 'S.O.S Calculo II',
+    autor: 'Minha Mente',
+    idObra: '*********',
+    emprestimo: '02/06/2025',
     devolucao: '15/09/2025',
   },
   {
     id: '2',
     tituloAbrev: 'Programação\né legal',
     icone: 'desktop',
-    obra:      'Programação é legal',
-    autor:     'Minha Mente',
-    idObra:    '*********',
-    emprestimo:'14/09/2025',
+    obra: 'Programação é legal',
+    autor: 'Minha Mente',
+    idObra: '*********',
+    emprestimo: '14/09/2025',
     devolucao: '15/12/2025',
   },
 ];
@@ -35,7 +35,7 @@ const CardLivro = ({ item }) => (
     {/* Capa do livro temporário de exemplo */}
     <View style={styles.capa}>
       <Text style={styles.capaTitulo}>{item.tituloAbrev}</Text>
-      <Ionicons name={item.icone} size={36} color={CORES.branco} style={{ marginTop: 10 }} />
+      <Ionicons name={item.icone} size={36} color={CORES.branco} style={styles.capaIcone} />
     </View>
     {/* Detalhes do livro temporário de exemplo */}
     <View style={styles.detalhes}>
@@ -52,7 +52,10 @@ const Pag_biblioteca = ({ navigation }) => (
   <View style={styles.tela}>
     <Header />
     <ScrollView style={styles.conteudo}>
-      <TituloPagina titulo="Biblioteca" icone="📚" />
+      <TituloPagina
+        titulo="Biblioteca"
+        icone={<Ionicons name="book" size={28} color={CORES.primaria} />}
+      />
       {livrosEmprestados.map((livro) => (
         <CardLivro key={livro.id} item={livro} />
       ))}
@@ -64,8 +67,8 @@ const Pag_biblioteca = ({ navigation }) => (
 export default Pag_biblioteca;
 
 const styles = StyleSheet.create({
-  tela:    { flex: 1, backgroundColor: CORES.branco },
-  conteudo:{ flex: 1, paddingHorizontal: 16 },
+  tela: { flex: 1, backgroundColor: CORES.branco },
+  conteudo: { flex: 1, paddingHorizontal: 16 },
   card: {
     flexDirection: 'row',
     backgroundColor: CORES.cinzaEscuro,
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
   },
   capa: {
     width: 110,
-    backgroundColor: '#6e6e6e',
+    backgroundColor: '#6E6E6E',
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
@@ -86,6 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
   },
-  detalhes:   { flex: 1, padding: 12 },
-  detalheTexto:{ color: CORES.branco, fontSize: 12, marginBottom: 3 },
+  capaIcone: { marginTop: 10 },
+  detalhes: { flex: 1, padding: 12 },
+  detalheTexto: { color: CORES.branco, fontSize: 12, marginBottom: 3 },
 });
