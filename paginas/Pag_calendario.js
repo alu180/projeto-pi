@@ -21,10 +21,12 @@ const diasIndisponiveis = [1, 2, 3, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21];
 
 const Pag_calendario = ({ navigation, route }) => {
   const [diaSelecionado, setDiaSelecionado] = useState(10);
+  // Recebe a sala da tela anterior (objeto { id, nome, bloco, andar })
+  const sala = route.params?.sala;
 
   const confirmar = () => {
     navigation.navigate('Horarios', {
-      sala: route.params?.sala,
+      sala,
       dia: diaSelecionado,
     });
   };
@@ -42,6 +44,17 @@ const Pag_calendario = ({ navigation, route }) => {
           </TouchableOpacity>
         }
       />
+
+      {/* Etiqueta com a sala selecionada */}
+      {sala && (
+        <View style={styles.salaInfo}>
+          <Ionicons name="school" size={18} color={CORES.primariaDark} />
+          <Text style={styles.salaInfoTexto}>
+            Sala selecionada: <Text style={styles.salaNome}>{sala.nome}</Text>
+            {sala.bloco ? ` (${sala.bloco}, ${sala.andar})` : ''}
+          </Text>
+        </View>
+      )}
 
       {/* Card calendário */}
       <View style={styles.cardCalendario}>
@@ -99,6 +112,26 @@ const styles = StyleSheet.create({
     backgroundColor: CORES.primaria,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  salaInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginHorizontal: 16,
+    marginTop: 4,
+    backgroundColor: CORES.cinzaMedio,
+    borderRadius: 10,
+    gap: 8,
+  },
+  salaInfoTexto: {
+    fontSize: 13,
+    color: CORES.texto,
+    flex: 1,
+  },
+  salaNome: {
+    fontWeight: 'bold',
+    color: CORES.primariaDark,
   },
   cardCalendario: {
     margin: 16,

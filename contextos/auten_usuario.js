@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../services/api'; 
 
 const auten_usuario = createContext();
 
@@ -25,22 +26,34 @@ export const AuthProvider = ({ children }) => {
     loadStoredUser();
   }, []);
 
-  // Função de login: chama a API, persiste e atualiza o estado
   const login = async (username, password) => {
-    // Substitua pela sua chamada real à API
-    const response = await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ token: 'apiaqui.com', user: username });
-      }, 1000);
-    });
+    try {
+      // Chamada real ao backend
+      const resposta = await api.post('/login', { username, password });
 
-    // Persistir token e dados
-    await AsyncStorage.setItem('userToken', response.token);
-    await AsyncStorage.setItem('userData', JSON.stringify(response.user));
+      const { token, user: usuarioRetornado } = resposta.data;
 
-    // Atualizar estado global
-    setUser(response.user);
-    return response;
+      // Persistir token e dados no AsyncStorage
+      await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userData', JSON.stringify(usuarioRetornado));
+
+      // Atualizar estado global
+      setUser(usuarioRetornado);
+
+      return resposta.data;
+    } catch (error) {
+      // Traduz erros do axios em mensagens amigáveis
+      if (error.response) {
+        // Backend respondeu com erro (ex: 401)
+        const msg = error.response.data?.erro || 'Erro no login';
+        throw new Error(msg);
+      } else if (error.request) {
+        // Não conseguiu falar com o backend
+        throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão.');
+      } else {
+        throw new Error(error.message);
+      }
+    }
   };
 
   const logout = async () => {

@@ -35,6 +35,7 @@ const Pag_login = () => {
     }
   };
 
+
   return (
     <View style={styles.container}>
       {/* Logo / Título */}
@@ -84,6 +85,7 @@ const Pag_login = () => {
         />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
+        
 
         {loading ? (
           <ActivityIndicator size="large" />
