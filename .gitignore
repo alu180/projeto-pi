@@ -1,0 +1,32 @@
+# === Node ===
+# Ignora node_modules em qualquer subpasta
+**/node_modules/
+
+# === Expo ===
+**/.expo/
+**/.expo-shared/
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Editores ===
+.vscode/
+.idea/
+*.swp
+
+# === SO ===
+.DS_Store
+Thumbs.db
+
+# === Variáveis de ambiente ===
+.env
+.env.local
+**/.env
+
+# === Arquivos pessoais ===
+# CLAUDE.md é uma config local, pode ficar fora do repo
+# (descomente se quiser ignorar)
+# CLAUDE.md
