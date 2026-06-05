@@ -6,6 +6,7 @@ import TituloPagina from '../components/TituloPagina';
 import BottomNav from '../components/BottomNav';
 import { CORES } from '../components/cores';
 
+// Dias da semana e dias do mês
 const diasSemana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const diasSetembro = [
   [null, null, null, null, null, null, null],
@@ -15,16 +16,15 @@ const diasSetembro = [
   [22, 23, 24, 25, 26, 27, 28],
   [29, 30, null, null, null, null, null],
 ];
+// Dias indisponíveis de exemplo
 const diasIndisponiveis = [1, 2, 3, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21];
 
 const Pag_calendario = ({ navigation, route }) => {
   const [diaSelecionado, setDiaSelecionado] = useState(10);
-  // Recebe a sala da tela anterior (objeto { id, nome, bloco, andar })
-  const sala = route.params?.sala;
 
   const confirmar = () => {
     navigation.navigate('Horarios', {
-      sala,
+      sala: route.params?.sala,
       dia: diaSelecionado,
     });
   };
@@ -33,6 +33,7 @@ const Pag_calendario = ({ navigation, route }) => {
     <View style={styles.tela}>
       <Header />
 
+      {/* Título e botão de confirmar */}
       <TituloPagina
         titulo="Dias e Horários Disponíveis"
         direita={
@@ -42,27 +43,18 @@ const Pag_calendario = ({ navigation, route }) => {
         }
       />
 
-      {/* Etiqueta com a sala selecionada */}
-      {sala && (
-        <View style={styles.salaInfo}>
-          <Ionicons name="school" size={18} color={CORES.primariaDark} />
-          <Text style={styles.salaInfoTexto}>
-            Sala selecionada: <Text style={styles.salaNome}>{sala.nome}</Text>
-            {sala.bloco ? ` (${sala.bloco}, ${sala.andar})` : ''}
-          </Text>
-        </View>
-      )}
-
       {/* Card calendário */}
       <View style={styles.cardCalendario}>
         <Text style={styles.mesNome}>Setembro</Text>
 
+        {/* Cabeçalho dos dias da semana */}
         <View style={styles.linhaCalendario}>
           {diasSemana.map((d) => (
             <Text key={d} style={styles.diaSemana}>{d}</Text>
           ))}
         </View>
 
+        {/* Linhas de datas */}
         {diasSetembro.slice(1).map((semana, i) => (
           <View key={i} style={styles.linhaCalendario}>
             {semana.map((dia, j) => {
@@ -107,26 +99,6 @@ const styles = StyleSheet.create({
     backgroundColor: CORES.primaria,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  salaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginHorizontal: 16,
-    marginTop: 4,
-    backgroundColor: CORES.cinzaMedio,
-    borderRadius: 10,
-    gap: 8,
-  },
-  salaInfoTexto: {
-    fontSize: 13,
-    color: CORES.texto,
-    flex: 1,
-  },
-  salaNome: {
-    fontWeight: 'bold',
-    color: CORES.primariaDark,
   },
   cardCalendario: {
     margin: 16,
