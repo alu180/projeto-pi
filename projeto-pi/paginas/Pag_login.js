@@ -35,8 +35,10 @@ const Pag_login = () => {
     }
   };
 
+
   return (
     <View style={styles.container}>
+      {/* Logo / Título */}
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <View style={styles.brandIcon}>
@@ -57,6 +59,7 @@ const Pag_login = () => {
         <Text style={styles.subtitle}>acessibilidade para a sua faculdade</Text>
       </View>
 
+      {/* Card */}
       <View style={styles.card}>
         <View style={styles.labelRow}>
           <Ionicons name="person-outline" size={22} color="#6F6F6F" />
@@ -82,6 +85,7 @@ const Pag_login = () => {
         />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
+        
 
         {loading ? (
           <ActivityIndicator size="large" />

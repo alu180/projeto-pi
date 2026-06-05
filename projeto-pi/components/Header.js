@@ -2,36 +2,38 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CORES } from './cores';
+import { usar_auten } from '../contextos/auten_usuario';  // ← NOVO
 
-const Header = ({
-  nomeAluno = 'Aluno com um sobrenome de aluno',
-  matricula = '*********',
-  curso = 'Ciência da Computação',
-  instituicao = 'IESB',
-  data = '10/09/2025',
-}) => (
-  <View style={styles.container}>
-    <View style={styles.avatar}>
-      <Ionicons name="happy-outline" size={28} color="#7A7A7A" />
+const Header = () => {
+  const { user } = usar_auten();  // ← NOVO
+
+  // Pega data de hoje formatada como dd/mm/yyyy
+  const hoje = new Date().toLocaleDateString('pt-BR');
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.avatar}>
+        <Ionicons name="happy-outline" size={28} color="#7A7A7A" />
+      </View>
+
+      <View style={styles.infoAluno}>
+        <Text style={styles.nome}>{user?.nome || 'Aluno'}</Text>
+        <Text style={styles.matriculaLabel}>Matrícula:</Text>
+        <Text style={styles.matriculaValor}>{user?.matricula || '---'}</Text>
+      </View>
+
+      <View style={styles.divisor} />
+
+      <View style={styles.infoCurso}>
+        <Text style={styles.cursoTexto}>Curso: {user?.curso || '---'}</Text>
+        <Text style={styles.instituicaoLabel}>Instituição:</Text>
+        <Text style={styles.instituicaoNome}>{user?.instituicao || '---'}</Text>
+      </View>
+
+      <Text style={styles.data}>{hoje}</Text>
     </View>
-
-    <View style={styles.infoAluno}>
-      <Text style={styles.nome}>{nomeAluno}</Text>
-      <Text style={styles.matriculaLabel}>Matrícula:</Text>
-      <Text style={styles.matriculaValor}>{matricula}</Text>
-    </View>
-
-    <View style={styles.divisor} />
-
-    <View style={styles.infoCurso}>
-      <Text style={styles.cursoTexto}>Curso: {curso}</Text>
-      <Text style={styles.instituicaoLabel}>Instituição:</Text>
-      <Text style={styles.instituicaoNome}>{instituicao}</Text>
-    </View>
-
-    <Text style={styles.data}>{data}</Text>
-  </View>
-);
+  );
+};
 
 export default Header;
 
