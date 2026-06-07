@@ -26,7 +26,3 @@ Thumbs.db
 .env.local
 **/.env
 
-# === Arquivos pessoais ===
-# CLAUDE.md é uma config local, pode ficar fora do repo
-# (descomente se quiser ignorar)
-# CLAUDE.md
