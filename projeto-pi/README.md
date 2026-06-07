@@ -1,92 +1,125 @@
-# Sinapse
+# Sinapse — Frontend (App Mobile)
 
-Aplicativo em React Native com Expo voltado para acessibilidade no contexto academico. O projeto possui telas de login, notificacoes, biblioteca, sala de estudo, calendario e horarios de reserva.
+App mobile do projeto **Sinapse**, construído com React Native + Expo.
 
-## Funcionalidades atuais
+> ℹ️ Para a visão geral do projeto, veja o [README principal](../README.md).
+> Para o backend, veja [sinapse-api/README.md](../sinapse-api/README.md).
 
-- Login com validacao de usuario e senha.
-- Tela inicial com notificacoes e registro de atividade.
-- Consulta de livros na biblioteca.
-- Selecao de sala de estudo.
-- Escolha de dia disponivel no calendario.
-- Escolha de horario para reserva.
-- Navegacao inferior entre as telas principais.
+---
 
-## Como usar o app
+## Stack
 
-1. Abra o app.
-2. Na tela de login, preencha usuario e senha.
-3. Toque em `entrar`.
-4. Use o menu inferior para navegar entre `Home`, `Biblioteca` e `Sala de Estudo`.
-5. Na area de sala de estudo:
-   - escolha uma sala;
-   - selecione um dia;
-   - escolha um horario;
-   - confirme a reserva.
-6. Para sair, toque no botao preto com icone de energia no menu inferior.
+- React Native 0.83.2
+- Expo 55.0.5
+- React Navigation (Stack)
+- Axios
+- AsyncStorage (Expo)
 
-## Observacao sobre login
+---
 
-Atualmente o login esta simulado para desenvolvimento. Qualquer usuario e qualquer senha nao vazios permitem entrar no app.
+## Pré-requisitos
 
-## Requisitos
+- **Node.js** 18+
+- **Android Studio** com emulador configurado (ou Expo Go no celular)
+- **Backend rodando** em `http://localhost:3000` — veja [sinapse-api](../sinapse-api/README.md)
 
-- Node.js instalado.
-- npm instalado.
-- Expo executado com `npx`.
-- App `Expo Go` instalado no celular, se quiser testar no dispositivo movel.
+---
 
-## Como rodar localmente
+## Como rodar
 
-Abra um terminal na pasta do projeto:
+### 1. Instalar dependências
 
-```powershell
-cd caminho/para/o/projeto
-```
-
-Instale as dependencias:
-
-```powershell
+```bash
+cd projeto-pi
 npm install
 ```
 
-### Rodar com Expo
+### 2. Subir o Expo
 
-```powershell
+```bash
 npx expo start
 ```
 
-Depois:
+### 3. Abrir o app
 
-- abra o `Expo Go` no celular;
-- escaneie o QR Code exibido no terminal ou no navegador;
-- mantenha o computador e o celular na mesma rede, se necessario.
+- **Emulador Android Studio:** pressione `a` no terminal do Expo
+- **Celular físico:** escaneie o QR code com o Expo Go (precisa ajustar a URL da API)
 
-### Outros comandos uteis
+---
 
-```powershell
-npm run start
-npm run android
-npm run ios
+## Configuração da URL da API
+
+O arquivo `services/api.js` define onde o app vai buscar dados:
+
+```javascript
+const BASE_URL = 'http://10.0.2.2:3000';  // Emulador Android Studio
 ```
 
-## Estrutura principal
+| Cenário | URL |
+|---|---|
+| Emulador Android Studio | `http://10.0.2.2:3000` (atual) |
+| Celular físico (Expo Go) | `http://<SEU_IP_LOCAL>:3000` (descubra com `ipconfig`) |
+| Emulador iOS | `http://localhost:3000` |
 
-- `App.js`: configuracao das rotas e navegacao.
-- `paginas/`: telas do aplicativo.
-- `components/`: componentes reutilizaveis.
-- `contextos/`: contexto de autenticacao.
-- `hooks/`: logica auxiliar de formulario e estado.
-- `assets/`: arquivos estaticos.
+---
 
-## Tecnologias usadas
+## Estrutura do projeto
 
-- React Native
-- Expo
-- React Navigation
-- Async Storage
+projeto-pi/
+├── App.js                   # Configuração de rotas (Stack Navigator)
+├── index.js                 # Entry point Expo
+├── paginas/                 # Telas
+│   ├── Pag_login.js
+│   ├── Pag_cadastro.js
+│   ├── Pag_notificacoes.js  # Home
+│   ├── Pag_biblioteca.js
+│   ├── Pag_acervo.js
+│   ├── Pag_sala_estudo.js
+│   ├── Pag_calendario.js
+│   └── Pag_horarios.js
+├── components/              # Componentes reutilizáveis
+│   ├── Header.js
+│   ├── BottomNav.js
+│   ├── TituloPagina.js
+│   └── cores.js             # Paleta de cores
+├── contextos/
+│   └── auten_usuario.js     # Contexto de autenticação + AsyncStorage
+├── hooks/
+│   └── User_login.js        # Hook customizado do formulário de login
+├── services/
+│   └── api.js               # Instância configurada do axios
+└── assets/                  # Ícones e splash
 
-## Observacoes de desenvolvimento
+---
 
-- O estado de autenticacao e salvo localmente com `AsyncStorage`.
-- A navegacao principal usa `@react-navigation/stack`.
+## Telas
+
+| Tela | Arquivo | Função |
+|---|---|---|
+| Login | `Pag_login.js` | Entrada no app + link para cadastro |
+| Cadastro | `Pag_cadastro.js` | Criar conta nova com auto-login |
+| Home | `Pag_notificacoes.js` | Notificações + Registro de atividade |
+| Biblioteca | `Pag_biblioteca.js` | Livros emprestados (com botão Devolver) |
+| Acervo | `Pag_acervo.js` | Livros disponíveis para empréstimo |
+| Sala de Estudo | `Pag_sala_estudo.js` | Lista de salas |
+| Calendário | `Pag_calendario.js` | Escolha do dia da reserva |
+| Horários | `Pag_horarios.js` | Escolha do horário + confirma reserva |
+
+---
+
+## Credenciais de teste
+
+- **Usuário:** `aluno`
+- **Senha:** `1234`
+
+Ou crie sua própria conta pelo botão "Criar conta" na tela de login.
+
+---
+
+## Comandos úteis
+
+```bash
+npx expo start              # Inicia Expo
+npx expo start --android    # Abre direto no emulador Android
+npx expo start --tunnel     # Usa tunnel se a rede do PC bloqueia
+```

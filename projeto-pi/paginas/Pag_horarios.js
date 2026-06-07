@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -36,23 +36,55 @@ const Pag_horarios = ({ navigation, route }) => {
   const { user } = usar_auten();
   const [horarioSelecionado, setHorarioSelecionado] = useState('17h30');
   const [enviando, setEnviando] = useState(false);
+  const [horariosOcupados, setHorariosOcupados] = useState([]);
+  const [carregandoOcupados, setCarregandoOcupados] = useState(true);
 
-  // Recebe data completa da tela anterior
   const hoje = new Date();
   const dia = route.params?.dia || hoje.getDate();
-  const mes = route.params?.mes || (hoje.getMonth() + 1); // 1-12
+  const mes = route.params?.mes || (hoje.getMonth() + 1);
   const ano = route.params?.ano || hoje.getFullYear();
   const sala = route.params?.sala || { id: 1, nome: 'Sala CB1' };
 
-  // Calcula o nome do dia da semana
-  const dataObj = new Date(ano, mes - 1, dia); // converte de volta pra 0-11
+  const dataObj = new Date(ano, mes - 1, dia);
   const nomeDiaSemana = NOMES_DOS_DIAS[dataObj.getDay()];
   const diaStr = String(dia).padStart(2, '0');
   const mesStr = String(mes).padStart(2, '0');
 
+  // Busca horários já ocupados pra essa sala/data
+  useEffect(() => {
+    const buscarHorariosOcupados = async () => {
+      if (!sala?.id) {
+        setCarregandoOcupados(false);
+        return;
+      }
+      try {
+        setCarregandoOcupados(true);
+        const resposta = await api.get(
+          `/salas/${sala.id}/horarios?dia=${dia}&mes=${mes}&ano=${ano}`
+        );
+        setHorariosOcupados(resposta.data.horariosOcupados || []);
+      } catch (err) {
+        console.log('Erro ao buscar horários ocupados:', err.message);
+        setHorariosOcupados([]);
+      } finally {
+        setCarregandoOcupados(false);
+      }
+    };
+    buscarHorariosOcupados();
+  }, [sala, dia, mes, ano]);
+
   const confirmar = async () => {
     if (!user?.id || !sala?.id) {
       Alert.alert('Erro', 'Dados incompletos para fazer a reserva.');
+      return;
+    }
+
+    // Bloqueia se selecionou um horário ocupado
+    if (horariosOcupados.includes(horarioSelecionado)) {
+      Alert.alert(
+        'Horário indisponível',
+        'Esse horário já está reservado. Escolha outro.'
+      );
       return;
     }
 
@@ -103,40 +135,75 @@ const Pag_horarios = ({ navigation, route }) => {
         }
       />
 
-      <ScrollView style={styles.tabela}>
-        {/* Cabeçalho da tabela */}
-        <View style={styles.linhaTabela}>
-          {['Período\nMatutino\n08h30', 'Período\nVespertino\n13h30', 'Período\nNoturno\n18h30'].map(
-            (col, i) => (
-              <View key={i} style={[styles.celula, styles.celulaHeader]}>
-                <Text style={styles.headerTexto}>{col}</Text>
-              </View>
-            )
-          )}
+      {/* Legenda de cores */}
+      <View style={styles.legenda}>
+        <View style={styles.legendaItem}>
+          <View style={[styles.legendaCor, { backgroundColor: CORES.branco, borderWidth: 1, borderColor: CORES.borda }]} />
+          <Text style={styles.legendaTexto}>Disponível</Text>
         </View>
+        <View style={styles.legendaItem}>
+          <View style={[styles.legendaCor, { backgroundColor: CORES.primaria }]} />
+          <Text style={styles.legendaTexto}>Selecionado</Text>
+        </View>
+        <View style={styles.legendaItem}>
+          <View style={[styles.legendaCor, { backgroundColor: CORES.cinzaClaro }]} />
+          <Text style={styles.legendaTexto}>Ocupado</Text>
+        </View>
+      </View>
 
-        {/* Linhas de horários */}
-        {[0, 1, 2, 3, 4].map((linha) => (
-          <View key={linha} style={styles.linhaTabela}>
-            {['matutino', 'vespertino', 'noturno'].map((periodo) => {
-              const horario = periodos[periodo][linha];
-              const ativo = horario === horarioSelecionado;
-              return (
-                <TouchableOpacity
-                  key={periodo}
-                  style={[styles.celula, ativo && styles.celulaAtiva]}
-                  onPress={() => !enviando && setHorarioSelecionado(horario)}
-                  disabled={enviando}
-                >
-                  <Text style={[styles.celulaTexto, ativo && styles.celulaTextoAtivo]}>
-                    {horario}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+      {carregandoOcupados ? (
+        <View style={styles.centralizadoTopo}>
+          <ActivityIndicator size="small" color={CORES.primaria} />
+          <Text style={styles.textoCarregando}>Verificando horários...</Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.tabela}>
+          {/* Cabeçalho da tabela */}
+          <View style={styles.linhaTabela}>
+            {['Período\nMatutino\n08h30', 'Período\nVespertino\n13h30', 'Período\nNoturno\n18h30'].map(
+              (col, i) => (
+                <View key={i} style={[styles.celula, styles.celulaHeader]}>
+                  <Text style={styles.headerTexto}>{col}</Text>
+                </View>
+              )
+            )}
           </View>
-        ))}
-      </ScrollView>
+
+          {/* Linhas de horários */}
+          {[0, 1, 2, 3, 4].map((linha) => (
+            <View key={linha} style={styles.linhaTabela}>
+              {['matutino', 'vespertino', 'noturno'].map((periodo) => {
+                const horario = periodos[periodo][linha];
+                const ativo = horario === horarioSelecionado;
+                const ocupado = horariosOcupados.includes(horario);
+
+                return (
+                  <TouchableOpacity
+                    key={periodo}
+                    style={[
+                      styles.celula,
+                      ativo && styles.celulaAtiva,
+                      ocupado && styles.celulaOcupada,
+                    ]}
+                    onPress={() => !enviando && !ocupado && setHorarioSelecionado(horario)}
+                    disabled={enviando || ocupado}
+                  >
+                    <Text
+                      style={[
+                        styles.celulaTexto,
+                        ativo && styles.celulaTextoAtivo,
+                        ocupado && styles.celulaTextoOcupada,
+                      ]}
+                    >
+                      {horario}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ))}
+        </ScrollView>
+      )}
 
       <BottomNav navigation={navigation} rotaAtiva="SalaEstudo" />
     </View>
@@ -159,6 +226,38 @@ const styles = StyleSheet.create({
   botaoDesabilitado: {
     opacity: 0.5,
   },
+  legenda: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: CORES.borda,
+  },
+  legendaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  legendaCor: {
+    width: 14,
+    height: 14,
+    borderRadius: 3,
+  },
+  legendaTexto: {
+    fontSize: 11,
+    color: CORES.texto,
+  },
+  centralizadoTopo: {
+    flex: 1,
+    paddingTop: 40,
+    alignItems: 'center',
+  },
+  textoCarregando: {
+    marginTop: 10,
+    color: CORES.primariaDark,
+    fontSize: 13,
+  },
   linhaTabela: { flexDirection: 'row', borderBottomWidth: 1, borderColor: CORES.borda },
   celula: {
     flex: 1,
@@ -171,6 +270,12 @@ const styles = StyleSheet.create({
   celulaHeader: { paddingVertical: 10 },
   headerTexto: { fontSize: 12, fontWeight: 'bold', textAlign: 'center' },
   celulaAtiva: { backgroundColor: CORES.primaria },
+  celulaOcupada: { backgroundColor: CORES.cinzaClaro },
   celulaTexto: { fontSize: 14 },
   celulaTextoAtivo: { color: CORES.branco, fontWeight: 'bold' },
+  celulaTextoOcupada: {
+    color: '#888',
+    fontStyle: 'italic',
+    textDecorationLine: 'line-through',
+  },
 });

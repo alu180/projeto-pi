@@ -16,70 +16,68 @@ import { CORES } from '../components/cores';
 import api from '../services/api';
 import { usar_auten } from '../contextos/auten_usuario';
 
-const CardLivro = ({ item, onDevolver }) => (
+const CardAcervo = ({ item, onEmprestar }) => (
   <View style={styles.card}>
-    {/* Capa do livro */}
     <View style={styles.capa}>
-      <Text style={styles.capaTitulo}>{item.obra}</Text>
-      <Ionicons name={item.icone || 'book'} size={36} color={CORES.branco} style={styles.capaIcone} />
+      <Ionicons name={item.icone || 'book'} size={36} color={CORES.branco} />
     </View>
-    {/* Detalhes */}
     <View style={styles.detalhes}>
-      <Text style={styles.detalheTexto}>Obra: {item.obra}</Text>
-      <Text style={styles.detalheTexto}>Autor: {item.autor}</Text>
-      <Text style={styles.detalheTexto}>ID: {String(item.id).padStart(9, '*')}</Text>
-      <Text style={styles.detalheTexto}>Empréstimo: {item.emprestimo}</Text>
-      <Text style={styles.detalheTexto}>Devolução: {item.devolucao}</Text>
-      <TouchableOpacity style={styles.botaoDevolver} onPress={() => onDevolver(item)}>
-        <Ionicons name="return-down-back" size={14} color={CORES.branco} />
-        <Text style={styles.botaoDevolverTexto}>Devolver</Text>
+      <Text style={styles.obra}>{item.obra}</Text>
+      <Text style={styles.autor}>Autor: {item.autor}</Text>
+      <Text style={styles.idObra}>ID: {String(item.id).padStart(9, '*')}</Text>
+      <TouchableOpacity style={styles.botaoEmprestar} onPress={() => onEmprestar(item)}>
+        <Ionicons name="bookmark" size={14} color={CORES.branco} />
+        <Text style={styles.botaoEmprestarTexto}>Pegar emprestado</Text>
       </TouchableOpacity>
     </View>
   </View>
 );
 
-const Pag_biblioteca = ({ navigation }) => {
+const Pag_acervo = ({ navigation }) => {
   const { user } = usar_auten();
   const [livros, setLivros] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  const buscarLivros = useCallback(async () => {
-    if (!user?.id) return;
+  const buscarAcervo = useCallback(async () => {
     try {
       setCarregando(true);
       setErro(null);
-      const resposta = await api.get(`/livros/${user.id}`);
+      const resposta = await api.get('/livros/disponiveis/lista');
       setLivros(resposta.data);
     } catch (err) {
-      const msg = err.response?.data?.erro || 'Falha ao buscar livros';
+      const msg = err.response?.data?.erro || 'Falha ao buscar acervo';
       setErro(msg);
       Alert.alert('Erro', msg);
     } finally {
       setCarregando(false);
     }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
-    buscarLivros();
-  }, [buscarLivros]);
+    buscarAcervo();
+  }, [buscarAcervo]);
 
-  const devolverLivro = (livro) => {
+  const emprestarLivro = (livro) => {
     Alert.alert(
-      'Devolver livro?',
-      `Deseja devolver "${livro.obra}"?`,
+      'Pegar emprestado?',
+      `Deseja pegar "${livro.obra}" emprestado por 15 dias?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Devolver',
+          text: 'Confirmar',
           onPress: async () => {
             try {
-              await api.put(`/livros/${livro.id}/devolver`);
-              // Remove do estado local
+              await api.put(`/livros/${livro.id}/emprestar`, { userId: user.id });
+              // Remove o livro do acervo local
               setLivros((prev) => prev.filter((l) => l.id !== livro.id));
-              Alert.alert('Sucesso', 'Livro devolvido!');
+              Alert.alert(
+                'Sucesso!',
+                'Livro adicionado à sua biblioteca.',
+                [{ text: 'OK', onPress: () => navigation.navigate('Biblioteca') }]
+              );
             } catch (err) {
-              const msg = err.response?.data?.erro || 'Erro ao devolver livro';
+              const msg = err.response?.data?.erro || 'Erro ao emprestar livro';
               Alert.alert('Erro', msg);
             }
           },
@@ -93,7 +91,7 @@ const Pag_biblioteca = ({ navigation }) => {
       return (
         <View style={styles.centralizado}>
           <ActivityIndicator size="large" color={CORES.primaria} />
-          <Text style={styles.textoCarregando}>Carregando livros...</Text>
+          <Text style={styles.textoCarregando}>Carregando acervo...</Text>
         </View>
       );
     }
@@ -107,14 +105,14 @@ const Pag_biblioteca = ({ navigation }) => {
     if (livros.length === 0) {
       return (
         <View style={styles.centralizado}>
-          <Text style={styles.textoVazio}>Nenhum livro emprestado no momento.</Text>
+          <Text style={styles.textoVazio}>Nenhum livro disponível no momento.</Text>
         </View>
       );
     }
     return (
       <FlatList
         data={livros}
-        renderItem={({ item }) => <CardLivro item={item} onDevolver={devolverLivro} />}
+        renderItem={({ item }) => <CardAcervo item={item} onEmprestar={emprestarLivro} />}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.lista}
       />
@@ -125,15 +123,14 @@ const Pag_biblioteca = ({ navigation }) => {
     <View style={styles.tela}>
       <Header />
       <TituloPagina
-        titulo="Biblioteca"
-        icone={<Ionicons name="book" size={28} color={CORES.primaria} />}
+        titulo="Acervo da Biblioteca"
+        icone={<Ionicons name="library" size={28} color={CORES.primaria} />}
         direita={
           <TouchableOpacity
-            style={styles.botaoAcervo}
-            onPress={() => navigation.navigate('Acervo')}
+            style={styles.botaoVoltar}
+            onPress={() => navigation.navigate('Biblioteca')}
           >
-            <Ionicons name="library" size={16} color={CORES.branco} />
-            <Text style={styles.botaoAcervoTexto}>Acervo</Text>
+            <Ionicons name="arrow-back" size={18} color={CORES.branco} />
           </TouchableOpacity>
         }
       />
@@ -143,35 +140,33 @@ const Pag_biblioteca = ({ navigation }) => {
   );
 };
 
-export default Pag_biblioteca;
+export default Pag_acervo;
 
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: CORES.branco },
   lista: { paddingHorizontal: 16 },
   card: {
     flexDirection: 'row',
-    backgroundColor: CORES.cinzaEscuro,
+    backgroundColor: CORES.cinzaMedio,
     borderRadius: 10,
     marginVertical: 8,
-    overflow: 'hidden',
-  },
-  capa: {
-    width: 110,
-    backgroundColor: '#6E6E6E',
     padding: 12,
     alignItems: 'center',
+  },
+  capa: {
+    width: 60,
+    height: 60,
+    backgroundColor: CORES.primaria,
+    borderRadius: 8,
     justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
-  capaTitulo: {
-    color: CORES.branco,
-    fontWeight: 'bold',
-    fontSize: 13,
-    textAlign: 'center',
-  },
-  capaIcone: { marginTop: 10 },
-  detalhes: { flex: 1, padding: 12 },
-  detalheTexto: { color: CORES.branco, fontSize: 12, marginBottom: 3 },
-  botaoDevolver: {
+  detalhes: { flex: 1 },
+  obra: { fontWeight: 'bold', fontSize: 14, color: CORES.texto },
+  autor: { fontSize: 12, color: '#444', marginTop: 2 },
+  idObra: { fontSize: 11, color: '#888', marginTop: 2 },
+  botaoEmprestar: {
     flexDirection: 'row',
     backgroundColor: CORES.verde,
     paddingVertical: 6,
@@ -182,24 +177,18 @@ const styles = StyleSheet.create({
     gap: 4,
     alignItems: 'center',
   },
-  botaoDevolverTexto: {
+  botaoEmprestarTexto: {
     color: CORES.branco,
     fontWeight: 'bold',
     fontSize: 12,
   },
-  botaoAcervo: {
-    flexDirection: 'row',
+  botaoVoltar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: CORES.primaria,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 4,
-  },
-  botaoAcervoTexto: {
-    color: CORES.branco,
-    fontWeight: 'bold',
-    fontSize: 12,
   },
   centralizado: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   textoCarregando: { marginTop: 10, color: CORES.primariaDark, fontSize: 14 },

@@ -1,0 +1,95 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id          Int     @id @default(autoincrement())
+  username    String  @unique
+  password    String
+  nome        String
+  matricula   String?
+  curso       String?
+  instituicao String?
+
+  livros       Livro[]
+  notificacoes Notificacao[]
+  atividades   Atividade[]
+  reservas     Reserva[]
+
+  @@map("usuarios")
+}
+
+model Sala {
+  id    Int     @id @default(autoincrement())
+  nome  String
+  bloco String?
+  andar String?
+
+  reservas Reserva[]
+
+  @@map("salas")
+}
+
+model Livro {
+  id         Int     @id @default(autoincrement())
+  userId     Int?
+  obra       String
+  autor      String?
+  emprestimo String?
+  devolucao  String?
+  icone      String?
+  status     String  @default("disponivel")
+
+  usuario Usuario? @relation(fields: [userId], references: [id])
+
+  @@map("livros")
+}
+
+model Notificacao {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  tipo     String?
+  titulo   String?
+  mensagem String? @db.Text
+
+  usuario Usuario @relation(fields: [userId], references: [id])
+
+  @@map("notificacoes")
+}
+
+model Atividade {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  categoria String?
+  icone     String?
+  data      String?
+  titulo    String?
+  validoAte String?
+
+  usuario Usuario @relation(fields: [userId], references: [id])
+
+  @@map("atividades")
+}
+
+model Reserva {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  salaId   Int
+  dia      Int
+  mes      Int
+  ano      Int
+  horario  String
+  criadaEm DateTime @default(now())
+
+  usuario Usuario @relation(fields: [userId], references: [id])
+  sala    Sala    @relation(fields: [salaId], references: [id])
+
+  @@map("reservas")
+}

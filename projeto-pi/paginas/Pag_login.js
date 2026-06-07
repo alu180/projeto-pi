@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import User_login from '../hooks/User_login';
 import { usar_auten } from '../contextos/auten_usuario';
 
-const Pag_login = () => {
+const Pag_login = ({ navigation }) => {
   const {
     username,
     setUsername,
@@ -34,7 +34,6 @@ const Pag_login = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -70,6 +69,7 @@ const Pag_login = () => {
           value={username}
           onChangeText={setUsername}
           placeholder="Digite seu usuário"
+          autoCapitalize="none"
         />
 
         <View style={styles.labelRow}>
@@ -85,7 +85,6 @@ const Pag_login = () => {
         />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        
 
         {loading ? (
           <ActivityIndicator size="large" />
@@ -96,6 +95,14 @@ const Pag_login = () => {
         )}
 
         <Text style={styles.forgot}>esqueceu sua senha?</Text>
+
+        {/* Link pra tela de cadastro (NOVO) */}
+        <View style={styles.cadastroLinha}>
+          <Text style={styles.cadastroTexto}>Não tem uma conta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+            <Text style={styles.cadastroLink}>Criar conta</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -232,5 +239,18 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginTop: 10,
+  },
+  cadastroLinha: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 15,
+  },
+  cadastroTexto: {
+    color: '#3C6E71',
+  },
+  cadastroLink: {
+    color: '#3C6E71',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });

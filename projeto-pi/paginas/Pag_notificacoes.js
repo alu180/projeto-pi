@@ -3,6 +3,7 @@ import {
   View,
   Text,
   FlatList,
+  TouchableOpacity,
   ActivityIndicator,
   Alert,
   StyleSheet,
@@ -60,7 +61,6 @@ const Pag_notificacoes = ({ navigation }) => {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Busca notificações e atividades EM PARALELO (Promise.all)
   useEffect(() => {
     const buscar = async () => {
       if (!user?.id) return;
@@ -87,6 +87,44 @@ const Pag_notificacoes = ({ navigation }) => {
     buscar();
   }, [user]);
 
+  // Apagar notificação com confirmação (NOVO — Passo 15)
+  const apagarNotificacao = (id, titulo) => {
+    Alert.alert(
+      'Apagar notificação?',
+      `Esta ação removerá "${titulo}" permanentemente.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Apagar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await api.delete(`/notificacoes/${id}`);
+              // Remove do estado local (sem precisar refetch)
+              setNotificacoes((prev) => prev.filter((n) => n.id !== id));
+            } catch (err) {
+              const msg =
+                err.response?.data?.erro ||
+                'Não foi possível apagar a notificação.';
+              Alert.alert('Erro', msg);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  // Renderiza UMA notificação envolvida em TouchableOpacity com long press
+  const renderNotificacao = ({ item }) => (
+    <TouchableOpacity
+      onLongPress={() => apagarNotificacao(item.id, item.titulo)}
+      delayLongPress={500}
+      activeOpacity={0.85}
+    >
+      <CardNotificacao item={item} />
+    </TouchableOpacity>
+  );
+
   // Componente que mostra a seção de atividades como rodapé da FlatList
   const renderRodape = () => (
     <View>
@@ -104,15 +142,21 @@ const Pag_notificacoes = ({ navigation }) => {
     </View>
   );
 
-  // Componente que mostra o título "Notificações" como cabeçalho da FlatList
+  // Componente que mostra o título "Notificações" + dica
   const renderCabecalho = () => (
-    <TituloPagina
-      titulo="Notificações"
-      icone={<Ionicons name="notifications" size={28} color={CORES.primaria} />}
-    />
+    <View>
+      <TituloPagina
+        titulo="Notificações"
+        icone={<Ionicons name="notifications" size={28} color={CORES.primaria} />}
+      />
+      {notificacoes.length > 0 && (
+        <Text style={styles.dicaTexto}>
+          Pressione e segure uma notificação para apagá-la
+        </Text>
+      )}
+    </View>
   );
 
-  // Decide o que renderizar de acordo com o estado
   const renderConteudo = () => {
     if (carregando) {
       return (
@@ -134,7 +178,7 @@ const Pag_notificacoes = ({ navigation }) => {
     return (
       <FlatList
         data={notificacoes}
-        renderItem={({ item }) => <CardNotificacao item={item} />}
+        renderItem={renderNotificacao}
         keyExtractor={(item) => `notif-${item.id}`}
         ListHeaderComponent={renderCabecalho}
         ListFooterComponent={renderRodape}
@@ -210,5 +254,13 @@ const styles = StyleSheet.create({
     color: CORES.primariaDark,
     fontSize: 14,
     fontStyle: 'italic',
+  },
+  dicaTexto: {
+    fontSize: 11,
+    color: '#888',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: 4,
+    marginTop: -4,
   },
 });
