@@ -16,7 +16,16 @@ import { CORES } from '../components/cores';
 import api from '../services/api';
 import { usar_auten } from '../contextos/auten_usuario';
 
-// horarios de exemplo
+const NOMES_DOS_DIAS = [
+  'Domingo',
+  'Segunda-feira',
+  'Terça-feira',
+  'Quarta-feira',
+  'Quinta-feira',
+  'Sexta-feira',
+  'Sábado',
+];
+
 const periodos = {
   matutino: ['08h30', '09h30', '10h30', '11h30', '12h30'],
   vespertino: ['13h30', '14h30', '15h30', '16h30', '17h30'],
@@ -28,11 +37,20 @@ const Pag_horarios = ({ navigation, route }) => {
   const [horarioSelecionado, setHorarioSelecionado] = useState('17h30');
   const [enviando, setEnviando] = useState(false);
 
-  const dia = route.params?.dia || 10;
+  // Recebe data completa da tela anterior
+  const hoje = new Date();
+  const dia = route.params?.dia || hoje.getDate();
+  const mes = route.params?.mes || (hoje.getMonth() + 1); // 1-12
+  const ano = route.params?.ano || hoje.getFullYear();
   const sala = route.params?.sala || { id: 1, nome: 'Sala CB1' };
 
+  // Calcula o nome do dia da semana
+  const dataObj = new Date(ano, mes - 1, dia); // converte de volta pra 0-11
+  const nomeDiaSemana = NOMES_DOS_DIAS[dataObj.getDay()];
+  const diaStr = String(dia).padStart(2, '0');
+  const mesStr = String(mes).padStart(2, '0');
+
   const confirmar = async () => {
-    // Validação defensiva
     if (!user?.id || !sala?.id) {
       Alert.alert('Erro', 'Dados incompletos para fazer a reserva.');
       return;
@@ -40,19 +58,18 @@ const Pag_horarios = ({ navigation, route }) => {
 
     try {
       setEnviando(true);
-
-      // POST pro backend
       await api.post('/reservas', {
         userId: user.id,
         salaId: sala.id,
         dia,
+        mes,
+        ano,
         horario: horarioSelecionado,
       });
 
-      // Sucesso: avisa e volta pra Home (que vai re-buscar notificações)
       Alert.alert(
         'Reserva Confirmada!',
-        `${sala.nome}\nDia ${dia}/09 às ${horarioSelecionado}`,
+        `${sala.nome}\n${diaStr}/${mesStr}/${ano} às ${horarioSelecionado}`,
         [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
       );
     } catch (err) {
@@ -70,7 +87,7 @@ const Pag_horarios = ({ navigation, route }) => {
       <Header />
 
       <TituloPagina
-        titulo={`Quarta - feira (${dia}/09)`}
+        titulo={`${nomeDiaSemana} (${diaStr}/${mesStr})`}
         direita={
           <TouchableOpacity
             style={[styles.botaoConfirmar, enviando && styles.botaoDesabilitado]}
